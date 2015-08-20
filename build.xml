@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="nltools" default="packageLatest" basedir=".">
+<project name="nltools" default="compileLatest" basedir=".">
 	<description>Custom build for nltools...</description>
 
 	<!-- Set up some global properties -->
 	<property name="SRC" location="src"/>
 	<property name="BIN" location="bin"/>
 	
+	<!-- compile the latest source -->
+	<target name="compileLatest">
+		<antcall target="clean"/>
+		<antcall target="compile"/>
+	</target>
+	
 	<!-- create a jar of the latest source -->
-	<target name="packageLatest">
+	<target name="packageLatestJar">
 		<antcall target="clean"/>
 		<antcall target="jarit"/>
 	</target>

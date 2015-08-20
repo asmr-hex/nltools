@@ -24,9 +24,14 @@ SOFTWARE.
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.io.FileReader;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Vector;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  *	The NLCorpus class is a container in which NLDocs are 
@@ -36,7 +41,7 @@ import java.util.ArrayList;
  *	a list of filenames provided to the NLCorpus constructor 
  *	is used to initialize an NLDoc for each file. Subsequently, 
  *	the NLDocs perform sentence boundary disambiguation (SBD), 
- *	sentence tokenization, and name entity recognition (NER).
+ *	sentence tokenization, and named-entity recognition (NER).
  *	Furthermore, the processing of each NLDoc can be performed 
  *	in parallel and the aggregated data can be output into an 
  *	XML file.
@@ -51,6 +56,8 @@ public class NLCorpus{
 	public Vector<NLDoc> nldocs;
 	public String[] fnames;
 	protected int N;
+	/** HashSet of stopwords used in NER */
+	protected HashSet<String> stopWords = new HashSet<String>();
 	
 	/** 
 	 *	Initializes vector of NLDocs corresponding to the 
@@ -63,10 +70,41 @@ public class NLCorpus{
 	public NLCorpus(String[] fnames){
 		this.N = fnames.length;
 		this.fnames = fnames;
+		this.loadData();
 		this.nldocs = new Vector<NLDoc>(N);
 		/*We can process these in parallel */
 		for (int k=0; k < N; k++){
-			this.nldocs.addElement(new NLDoc(fnames[k]));
+			this.nldocs.addElement(new NLDoc(fnames[k], stopWords));
+		}
+	}
+	
+	/**
+	 *	Exports list of named entities from all processed files.
+	 *
+	 *	@param	filename for desired output (.txt)
+	 */
+	public void exportNamedEntities(String fname){
+		HashSet<String> entities = new HashSet<String>();
+		/* get unique named-entities for each document */
+		for (int d = 0; d < this.N; d++){
+			Iterator<String> itr = this.nldocs.get(d).getNamedEntities().keySet().iterator();
+			while (itr.hasNext()){
+				entities.add(itr.next());
+			}
+		}
+		/* export to text file */
+		try{
+			File fd = new File(fname);
+			fd.createNewFile();
+			
+			PrintWriter file = new PrintWriter(fd, "utf-8");
+			Iterator<String> entity = entities.iterator();
+			while(entity.hasNext()){
+				file.println(entity.next());
+			}
+			file.close();
+		} catch(IOException e){
+			e.printStackTrace();
 		}
 	}
 	
@@ -89,8 +127,37 @@ public class NLCorpus{
 			for (int d = 0; d < this.N; d++){
 				NLDoc nldoc = this.nldocs.get(d);
 				file.println("  <nldoc id=\"" + nldoc.getFileName() + "\">");
-				ArrayList<String[]> sentences = nldoc.getSentences();
+				/* define named-entities */
+				HashMap<String, HashMap<String, ArrayList<Integer>>> entities =
+					nldoc.getNamedEntities();
+				file.println("    <named-entities>");
+				Iterator<String> itr = entities.keySet().iterator();
+				while (itr.hasNext()){
+					/* build sentence/token indicies for this entity */
+					String entity_name = itr.next();
+					HashMap<String, ArrayList<Integer>> entity = entities.get(entity_name);
+					StringBuilder s_idx = new StringBuilder("sentence=\"");
+					StringBuilder t_idx = new StringBuilder("token=\"");
+					for (int l=0; l<entity.get("token").size(); l++){
+						s_idx.append(Integer.toString(entity.get("sentence").get(l)));
+						t_idx.append(Integer.toString(entity.get("token").get(l)));
+						if (l < entity.get("token").size()-1){
+							s_idx.append(",");
+							t_idx.append(",");
+						}
+					}
+					s_idx.append("\"");
+					t_idx.append("\"");
+					/* add entity entry */
+					entity_name = entity_name.replaceAll("\'","&apos;");
+					entity_name = entity_name.replaceAll("\"","&quot;");
+					entity_name = entity_name.replaceAll("<","&lt;");
+					entity_name = entity_name.replaceAll(">","&gt;");
+					file.println("      <entity "+s_idx+" "+t_idx+">"+entity_name+"</entity>");
+				}
+				file.println("    </named-entities>");
 				/* define each sentence xml */
+				ArrayList<String[]> sentences = nldoc.getSentences();				
 				for (int s = 0; s < sentences.size(); s++){
 					file.println("    <sentence id=\"" + Integer.toString(s) + "\">");
 					String[] tokens = sentences.get(s);
@@ -117,4 +184,41 @@ public class NLCorpus{
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 *	Loads data necessary for natural langauge processing. In 
+	 *	particular, a list of stopwords (Porter et al., 1980) are 
+	 *	loaded and used to filter out non-named-entities.
+	 *	
+	 *	References:
+	 *	Porter, M. F. 1980. "An Algorithm for Suffix Stripping."
+	 *	 Program, 14(3), 130-37.
+	 */
+	protected void loadData(){
+		/* define system-dependent path to data */
+		String sep = File.separator;
+		String fn = ".."+sep+"data"+sep+"stopwords.txt";
+		fn = this.getClass().getResource("").getPath() + fn;
+		fn = fn.replaceAll("%20", " ");
+		
+		BufferedReader buf = null;
+		try{
+			String line;
+			buf = new BufferedReader(new FileReader(fn));
+			/* read through data line-by-line */
+			while ((line = buf.readLine()) != null){
+				/* add stopword to HashSet */
+				stopWords.add(line.trim());
+			}
+		}catch (IOException e0){
+			e0.printStackTrace();
+			try{
+				if (buf != null) buf.close();
+			} catch(IOException e1){
+				e1.printStackTrace();
+			}
+		}
+	}
+	
+	
 }

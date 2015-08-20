@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8">
+<corpus>
+  <nldoc id="nlp_data.txt">
+    <named-entities>
+      <entity sentence="2" token="8">June</entity>
+      <entity sentence="0" token="34">European War</entity>
+      <entity sentence="0" token="9">September</entity>
+      <entity sentence="2" token="26">Yugoslav</entity>
+      <entity sentence="" token="">Archduke Franz Ferdinand of Austria</entity>
+      <entity sentence="0" token="15">Ernst Haeckel</entity>
+      <entity sentence="2,3" token="23,7">Austria-Hungary</entity>
+      <entity sentence="0" token="3">First World War</entity>
+      <entity sentence="0" token="13">German</entity>
+      <entity sentence="2" token="28">Gavrilo Princip</entity>
+      <entity sentence="2" token="38">Sarajevo</entity>
+      <entity sentence="" token="">Kingdom of Serbia</entity>
+    </named-entities>
+    <sentence id="0">
+      <w id="0">The</w><w id="1">term</w><w id="2">&quot;</w><w id="3">First World War</w><w id="4">&quot;</w><w id="5">was</w><w id="6">first</w><w id="7">used</w><w id="8">in</w><w id="9">September</w><w id="10">1914</w><w id="11">by</w><w id="12">the</w><w id="13">German</w><w id="14">philosopher</w><w id="15">Ernst Haeckel</w><w id="16">,</w><w id="17">who</w><w id="18">claimed</w><w id="19">that</w><w id="20">&quot;</w><w id="21">there</w><w id="22">is</w><w id="23">no</w><w id="24">doubt</w><w id="25">that</w><w id="26">the</w><w id="27">course</w><w id="28">and</w><w id="29">character</w><w id="30">of</w><w id="31">the</w><w id="32">feared</w><w id="33">&apos;</w><w id="34">European War</w><w id="35">&apos;</w><w id="36">.</w><w id="37">.</w><w id="38">.</w><w id="39">will</w><w id="40">become</w><w id="41">the</w><w id="42">first</w><w id="43">world</w><w id="44">war</w><w id="45">in</w><w id="46">the</w><w id="47">full</w><w id="48">sense</w><w id="49">of</w><w id="50">the</w><w id="51">word</w><w id="52">.</w><w id="53">&quot;</w>
+    </sentence>
+    <sentence id="1">
+      <w id="0">Why</w><w id="1">did</w><w id="2">the</w><w id="3">war</w><w id="4">begin</w><w id="5">?</w>
+    </sentence>
+    <sentence id="2">
+      <w id="0">The</w><w id="1">immediate</w><w id="2">trigger</w><w id="3">for</w><w id="4">war</w><w id="5">was</w><w id="6">the</w><w id="7">28</w><w id="8">June</w><w id="9">1914</w><w id="10">assassination</w><w id="11">of</w><w id="12">Archduke</w><w id="13">Franz</w><w id="14">Ferdinand</w><w id="15">of</w><w id="16">Austria</w><w id="17">,</w><w id="18">heir</w><w id="19">to</w><w id="20">the</w><w id="21">throne</w><w id="22">of</w><w id="23">Austria-Hungary</w><w id="24">,</w><w id="25">by</w><w id="26">Yugoslav</w><w id="27">nationalist</w><w id="28">Gavrilo Princip</w><w id="29">(</w><w id="30">19</w><w id="31">years</w><w id="32">old</w><w id="33">at</w><w id="34">the</w><w id="35">time</w><w id="36">)</w><w id="37">in</w><w id="38">Sarajevo</w><w id="39">.</w>
+    </sentence>
+    <sentence id="3">
+      <w id="0">This</w><w id="1">set</w><w id="2">off</w><w id="3">a</w><w id="4">diplomatic</w><w id="5">crisis</w><w id="6">when</w><w id="7">Austria-Hungary</w><w id="8">delivered</w><w id="9">an</w><w id="10">ultimatum</w><w id="11">to</w><w id="12">the</w><w id="13">Kingdom</w><w id="14">of</w><w id="15">Serbia</w><w id="16">,</w><w id="17">and</w><w id="18">entangled</w><w id="19">international</w><w id="20">alliances</w><w id="21">formed</w><w id="22">over</w><w id="23">the</w><w id="24">previous</w><w id="25">decades</w><w id="26">were</w><w id="27">invoked</w><w id="28">.</w>
+    </sentence>
+    <sentence id="4">
+      <w id="0">Within</w><w id="1">weeks</w><w id="2">,</w><w id="3">the</w><w id="4">major</w><w id="5">powers</w><w id="6">were</w><w id="7">at</w><w id="8">war</w><w id="9">and</w><w id="10">the</w><w id="11">conflict</w><w id="12">soon</w><w id="13">spread</w><w id="14">around</w><w id="15">the</w><w id="16">world</w><w id="17">.</w>
+    </sentence>
+  </nldoc>
+</corpus>
