@@ -26,12 +26,22 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.FileReader;
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.IOException;
 import java.util.Vector;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.HashSet;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Enumeration;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.Callable;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipEntry;
 
 /**
  *	The NLCorpus class is a container in which NLDocs are 
@@ -54,10 +64,11 @@ import java.util.Iterator;
 public class NLCorpus{
 
 	public Vector<NLDoc> nldocs;
-	public String[] fnames;
+	public String[] fname;
 	protected int N;
 	/** HashSet of stopwords used in NER */
 	protected HashSet<String> stopWords = new HashSet<String>();
+	protected boolean parallel = false;
 	
 	/** 
 	 *	Initializes vector of NLDocs corresponding to the 
@@ -67,15 +78,65 @@ public class NLCorpus{
 	 *	
 	 *	@param	list of filenames to be processed
 	 */
-	public NLCorpus(String[] fnames){
-		this.N = fnames.length;
-		this.fnames = fnames;
+	public NLCorpus(String[] fname){
+		this.fname = fname;
 		this.loadData();
-		this.nldocs = new Vector<NLDoc>(N);
-		/*We can process these in parallel */
-		for (int k=0; k < N; k++){
-			this.nldocs.addElement(new NLDoc(fnames[k], stopWords));
+		int N = fname.length;
+		
+		if (this.parallel){
+			/* if provided filename ends in .zip, parallelize */
+			/*ZipFile zip = null;
+			try{
+				zip = new ZipFile(fname);
+			}catch(IOException ioe){
+				ioe.printStackTrace();
+			}
+			Enumeration<? extends ZipEntry> entries = zip.entries();
+			this.N = zip.size();*/
+			
+			this.nldocs = new Vector<NLDoc>(N);
+			
+			ExecutorService pool = Executors.newFixedThreadPool(3);
+			List<Callable<NLDoc>> tasks = new ArrayList<Callable<NLDoc>>();
+			for (String fn : fname){
+				tasks.add(new NLTask(fn, this.stopWords));
+			}
+			/*try{
+				while(entries.hasMoreElements()){
+					InputStream stream = zip.getInputStream(entries.nextElement());
+					tasks.add(new NLTask(stream, this.stopWords));
+				}
+			}catch(IOException ioe){
+				ioe.printStackTrace();
+			}*/
+
+			try{
+				List<Future<NLDoc>> futures = pool.invokeAll(tasks);
+				System.out.println(Integer.toString(futures.size()));
+				try{
+					for (int t=0; t<futures.size(); t++){
+						this.nldocs.addElement(futures.get(t).get());
+						System.out.println(futures.get(t).get().getFileName());
+					}
+				}catch(ExecutionException ee){
+					//ee.printStackTrace();
+					ee.getCause();
+				}catch(InterruptedException ie){
+					ie.printStackTrace();
+				}
+			}catch(InterruptedException ie){
+				ie.printStackTrace();
+				pool.shutdown();
+			}
+			pool.shutdown();
+		}else{
+			/* single file, no parallelization */
+			this.nldocs = new Vector<NLDoc>(N);
+			for (String fn : this.fname){
+				this.nldocs.addElement(new NLDoc(fn, stopWords));
+			}
 		}
+
 	}
 	
 	/**

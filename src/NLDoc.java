@@ -24,6 +24,8 @@ SOFTWARE.
 
 import java.io.FileReader;
 import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -70,20 +72,28 @@ public class NLDoc{
 	protected String fname;
 	
 	/** 
-	 *	Constructs an NLDoc object by reading the file 
-	 *	line-by-line, performing sentence boundary 
-	 *	disambiguation, and tokenizing each sentence.
+	 *	Constructs NLDoc document.
 	 *	
-	 *	@param	filename of file to be processed
+	 *	@param	String filename of file to be processed
 	 *	@param	HashSet of stopwords used in NER
 	 */
 	public NLDoc(String fname, HashSet<String> stopWords){
 		this.fname = fname;
 		this.stopWords = stopWords;
-		this.readFile(fname);
+		this.NLP();
+	}
+	
+	/**
+	 *	Begins processing of data.
+	 *	Constructs an NLDoc object by reading the file 
+	 *	line-by-line, performing sentence boundary 
+	 *	disambiguation, and tokenizing each sentence.
+	 */
+	protected void NLP(){
+		this.readFile(this.fname);
 		this.NER();		
 		this.tokenize();
-		//this.printSentences();
+		this.printSentences();
 	}
 	
 	/** 
@@ -91,7 +101,7 @@ public class NLDoc{
 	 *	performs sentence boundary disambiguation in one
 	 *	pass.
 	 *	
-	 *	@param filename of file to be processed
+	 *	@param String filename of file to be processed
 	 */
 	protected void readFile(String fn){
 		BufferedReader buf = null;
